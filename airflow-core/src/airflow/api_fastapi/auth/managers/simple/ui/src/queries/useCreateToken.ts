@@ -32,7 +32,11 @@ export const useCreateToken = ({ onSuccess }: { onSuccess: (data: LoginResponse)
   const { isPending, mutate } = useCreateTokenMutation(undefined, {
     onError,
     onSuccess: (response) => {
-      onSuccess(response.data as LoginResponse);
+      if (response.data) {
+        onSuccess(response.data);
+      } else {
+        onError(response.error);
+      }
     },
   });
 
