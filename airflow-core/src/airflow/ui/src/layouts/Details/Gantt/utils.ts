@@ -96,7 +96,7 @@ export const transformGanttData = ({
       // Handle groups and mapped tasks using grid summary (aggregated min/max times)
       // Use ISO so time scale and bar positions render consistently across browsers
       if ((node.isGroup ?? node.is_mapped) && gridSummary) {
-        if (gridSummary.min_start_date === null || gridSummary.max_end_date === null) {
+        if (gridSummary.min_start_date === null) {
           return undefined;
         }
 
@@ -108,7 +108,7 @@ export const transformGanttData = ({
             taskId: gridSummary.task_id,
             x: [
               dayjs(gridSummary.min_start_date).toISOString(),
-              dayjs(gridSummary.max_end_date).toISOString(),
+              gridSummary.max_end_date === null ? dayjs().toISOString() : dayjs(gridSummary.max_end_date).toISOString(),
             ],
             y: gridSummary.task_id,
           },
