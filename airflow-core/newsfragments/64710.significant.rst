@@ -1,0 +1,1 @@
+Fix race condition in deadline check loop by adding skip_locked=True to prevent duplicate handle_miss() calls in HA scheduler setups.

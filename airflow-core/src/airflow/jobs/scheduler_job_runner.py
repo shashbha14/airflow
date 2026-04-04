@@ -1630,6 +1630,7 @@ class SchedulerJobRunner(BaseJobRunner, LoggingMixin):
                         select(Deadline)
                         .where(Deadline.deadline_time < datetime.now(timezone.utc))
                         .where(~Deadline.missed)
+                        .with_for_update(skip_locked=True, of=Deadline)
                         .options(selectinload(Deadline.callback), selectinload(Deadline.dagrun))
                     ):
                         deadline.handle_miss(session)
