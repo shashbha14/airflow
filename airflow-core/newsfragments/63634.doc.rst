@@ -1,0 +1,1 @@
+Document that the plugins folder actively imports ``.py`` files at startup and registers them in ``sys.modules`` by bare filename, unlike ``dags`` and ``config`` folders.

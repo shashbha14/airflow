@@ -1,0 +1,1 @@
+Add Kustomize bases and overlays for Elasticsearch and OpenSearch connection secrets.
