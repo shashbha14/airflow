@@ -271,4 +271,65 @@ describe("buildTaskInstanceUrl", () => {
       }),
     ).toBe("/dags/my_dag/runs/run_1/tasks/group/my_group");
   });
+
+  it("should not preserve sub-routes when navigating to a mapped task list page", () => {
+    // Regression test for https://github.com/apache/airflow/issues/64875
+    // When clicking a DTM task in the grid without a specific mapIndex, the URL should be
+    // /tasks/:taskId/mapped — NOT /tasks/:taskId/mapped/xcom (which would make mapIndex="xcom")
+    expect(
+      buildTaskInstanceUrl({
+        currentPathname: "/dags/dag_1/runs/run_1/tasks/task_1/mapped/0/xcom",
+        dagId: "dag_1",
+        isMapped: true,
+        runId: "run_1",
+        taskId: "task_2",
+      }),
+    ).toBe("/dags/dag_1/runs/run_1/tasks/task_2/mapped");
+
+    // Same for other sub-routes
+    expect(
+      buildTaskInstanceUrl({
+        currentPathname: "/dags/dag_1/runs/run_1/tasks/task_1/mapped/2/details",
+        dagId: "dag_1",
+        isMapped: true,
+        runId: "run_1",
+        taskId: "task_2",
+      }),
+    ).toBe("/dags/dag_1/runs/run_1/tasks/task_2/mapped");
+
+    // With mapIndex="-1" (explicit, equivalent to no mapIndex)
+    expect(
+      buildTaskInstanceUrl({
+        currentPathname: "/dags/dag_1/runs/run_1/tasks/task_1/mapped/0/xcom",
+        dagId: "dag_1",
+        isMapped: true,
+        mapIndex: "-1",
+        runId: "run_1",
+        taskId: "task_2",
+      }),
+    ).toBe("/dags/dag_1/runs/run_1/tasks/task_2/mapped");
+
+    // Also applies when navigating from a non-mapped task's XCom tab
+    expect(
+      buildTaskInstanceUrl({
+        currentPathname: "/dags/dag_1/runs/run_1/tasks/task_1/xcom",
+        dagId: "dag_1",
+        isMapped: true,
+        runId: "run_1",
+        taskId: "task_2",
+      }),
+    ).toBe("/dags/dag_1/runs/run_1/tasks/task_2/mapped");
+
+    // With a specific mapIndex, sub-routes SHOULD be preserved
+    expect(
+      buildTaskInstanceUrl({
+        currentPathname: "/dags/dag_1/runs/run_1/tasks/task_1/mapped/0/xcom",
+        dagId: "dag_1",
+        isMapped: true,
+        mapIndex: "3",
+        runId: "run_1",
+        taskId: "task_2",
+      }),
+    ).toBe("/dags/dag_1/runs/run_1/tasks/task_2/mapped/3/xcom");
+  });
 });

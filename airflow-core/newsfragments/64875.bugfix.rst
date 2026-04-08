@@ -1,0 +1,1 @@
+Fix ``map_index=NaN`` API error when navigating to the XCom tab of a dynamically mapped task via the grid view.

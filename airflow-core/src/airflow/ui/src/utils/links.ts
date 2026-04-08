@@ -84,8 +84,11 @@ export const buildTaskInstanceUrl = (params: {
 }): string => {
   const { currentPathname, dagId, isGroup = false, isMapped = false, mapIndex, runId, taskId } = params;
   const groupPath = isGroup ? "group/" : "";
-  // Task groups only have "Task Instances" tab, so never preserve tabs for groups
-  const additionalPath = isGroup ? "" : getTaskInstanceAdditionalPath(currentPathname);
+  const navigatingToMappedList = isMapped && !isGroup && (mapIndex === undefined || mapIndex === "-1");
+  // Task groups only have "Task Instances" tab, so never preserve tabs for groups.
+  // Mapped task list pages (/tasks/:taskId/mapped) also only have "Task Instances" tab.
+  const additionalPath =
+    isGroup || navigatingToMappedList ? "" : getTaskInstanceAdditionalPath(currentPathname);
 
   let basePath = `/dags/${dagId}/runs/${runId}/tasks/${groupPath}${taskId}`;
 
